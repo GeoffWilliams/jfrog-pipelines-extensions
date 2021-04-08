@@ -1,0 +1,16 @@
+configuration:
+  # Name of environment variable we will add to the pipeline
+  pipelineVariable:
+    type: String
+    validate:
+      notEmpty: true
+
+  # The ARN or friendly name of the secret to read
+  secretId:
+    type: String
+    validate:
+      notEmpty: true
+
+  # optional (otherwise use whatever the system default is
+  region:
+    type: String
