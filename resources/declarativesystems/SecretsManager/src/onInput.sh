@@ -27,9 +27,13 @@ add_secretsmanager_run_variables() {
 
 
   # secrets
+  # Arrays are handled kinda funny
+  # @see https://www.jfrog.com/confluence/display/JFROG/Pipelines+Resources
+  #
+  # I'm ignoring this and trying to parse and iterate JSON ;-)
   local secrets
-  secrets=$(find_resource_variable "$resourceName" "secrets")
-  if [ -z "$secrets" ] ; then
+  secretsJson=$(find_resource_variable "$resourceName" "secrets")
+  if [ -z "$secretsJson" ] ; then
     echo "[declarativesystems/SecretsManager] secrets (list of secrets to lookup) are required"
     exit 1
   fi
@@ -45,6 +49,11 @@ add_secretsmanager_run_variables() {
   echo "======="
   env
   echo "========"
+  echo "captured: ${secrets}"
+  # JSON string -> bash array with help from JQ
+  # @see https://www.starkandwayne.com/blog/bash-for-loop-over-json-array-using-jq/
+  secrets=$(echo "${secretsJson}" | jq -r '.[]')
+
 
   for secret in $secrets ; do
     # secretId
