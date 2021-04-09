@@ -341,6 +341,10 @@ add_secretsmanager_run_variables() {
     exit 1
   fi
 
+  echo "======="
+  env
+  echo "========"
+
   for secret in $secrets ; do
     # secretId
     local secretId
