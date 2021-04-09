@@ -21,24 +21,33 @@ add_secretsmanager_run_variable() {
   region=$(find_resource_variable "$resourceName" "region")
 
   # run AWS cli and extract the secret value, add to build pipeline
-  local secretString
-  secretString=$(aws secretsmanager get-secret-value \
+
+  # 1. blob of JSON...
+  local awsOutput
+  awsOutput=$(aws secretsmanager get-secret-value \
     --secret-id "${secretId}" \
-    --region "${region}" | jq -j .SecretString
+    --region "${region}"
   )
-  status="$?"
-  if [ "$status" -ne 0 ] ; then
-    echo "[SecretsManager] failed: ${secretString}"
+  if [ "$?" -ne 0 ] ; then
+    echo "[SecretsManager] AWS sdk command failed: ${awsOutput}"
+    exit 1
+  fi
+
+  # 2 . Extract secretstring...
+  local secretString
+  secretString=$(echo "$awsOutput" | jq -j .SecretString)
+  if [ "$?" -ne 0 ] ; then
+    echo "[SecretsManager] extract SecretString JSON failed: ${secretString}"
     exit 1
   fi
 
   if [ -z "$secretString" ] ; then
-    echo "SecretsManager SecretsString (value) for ${secretId} is empty"
+    echo "[SecretsManager] SecretsString (value) for ${secretId} is empty"
     exit 1
   fi
 
   add_run_variables "$pipelineVariable"="$secretString"
-  echo "added pipeline variable ${pipelineVariable} "
+  echo "[SecretsManager] added pipeline variable ${pipelineVariable} "
 }
 
 execute_command add_secretsmanager_run_variable "%%context.resourceName%%"
