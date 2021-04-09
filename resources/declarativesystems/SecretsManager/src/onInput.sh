@@ -37,8 +37,9 @@ add_secretsmanager_run_variables() {
   # region
   local region
   region=$(find_resource_variable "$resourceName" "region")
-  if [ -z "$secretId" ] ; then
+  if [ -z "$region" ] ; then
     echo "[declarativesystems/SecretsManager] region is required"
+    exit 1
   fi
 
   for secret in $secrets ; do
