@@ -356,7 +356,7 @@ add_secretsmanager_run_variables() {
 
     # pipelineVariable
     local pipelineVariable
-    pipelineVariable=$(echo "$secret" | awk awk -F= '{print $2}')
+    pipelineVariable=$(echo "$secret" | awk -F= '{print $2}')
     if [ -z "$pipelineVariable" ] ; then
       echo "[declarativesystems/SecretsManager] no pipelineVariable could be parsed from ${secret}"
       exit 1
