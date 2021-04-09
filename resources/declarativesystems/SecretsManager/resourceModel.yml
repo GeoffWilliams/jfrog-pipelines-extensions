@@ -7,15 +7,16 @@ configuration:
     validate:
       notEmpty: true
 
-  # Name of environment variable we will add to the pipeline
-  pipelineVariable:
-    type: String
-    validate:
-      notEmpty: true
-
-  # The ARN or friendly name of the secret to read
-  secretId:
-    type: String
+  # List of SecretsServer IDs (friendly name or ARN) and the correspoinding
+  # pipeline variable to assign for each one, eg:
+  #
+  #   secrets:
+  #     # lookup AWS Secret `/foo/secret1` and set pipeline variable `secret1`
+  #     - /foo/secret1=secret1
+  #     # lookup AWS Secret `/foo/secret2` and set pipeline variable `secret2`
+  #     - /foo/secret2=secret2
+  secrets:
+    type: String[]
     validate:
       notEmpty: true
 
