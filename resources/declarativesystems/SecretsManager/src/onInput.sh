@@ -54,6 +54,7 @@ add_secretsmanager_run_variables() {
 
 
   for secret in $secretsArray ; do
+    echo "processing: ${secret}"
     # secretId
     local secretId
     secretId=$(echo "$secret" | awk -F= '{print $1}')
@@ -74,6 +75,8 @@ add_secretsmanager_run_variables() {
       echo "[declarativesystems/SecretsManager] no pipelineVariable could be parsed from ${secret}"
       exit 1
     fi
+
+    echo "got: sid=${secretId}, sidi=${secretIdInterpolated} plv=${pipelineVariable}"
 
     # 1. blob of JSON...
     local awsOutput
