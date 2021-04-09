@@ -322,9 +322,14 @@ add_secretsmanager_run_variable() {
   # run AWS cli and extract the secret value, add to build pipeline
   local secretString
   secretString=$(aws secretsmanager get-secret-value \
-    --secret-id "/yolk/artifactory" \
-    --region us-east-1 | jq -j .SecretString
+    --secret-id "${secretId}" \
+    --region "${region}" | jq -j .SecretString
   )
+  status="$?"
+  if [ "$status" -ne 0 ] ; then
+    echo "[SecretsManager] failed: ${secretString}"
+    exit 1
+  fi
 
   if [ -z "$secretString" ] ; then
     echo "SecretsManager SecretsString (value) for ${secretId} is empty"

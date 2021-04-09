@@ -24,8 +24,13 @@ add_secretsmanager_run_variable() {
   local secretString
   secretString=$(aws secretsmanager get-secret-value \
     --secret-id "${secretId}" \
-    --region ${region} | jq -j .SecretString
+    --region "${region}" | jq -j .SecretString
   )
+  status="$?"
+  if [ "$status" -ne 0 ] ; then
+    echo "[SecretsManager] failed: ${secretString}"
+    exit 1
+  fi
 
   if [ -z "$secretString" ] ; then
     echo "SecretsManager SecretsString (value) for ${secretId} is empty"
