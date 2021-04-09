@@ -32,8 +32,8 @@ add_secretsmanager_run_variables() {
   #
   # I'm ignoring this and trying to parse and iterate JSON ;-)
   local secrets
-  secretsJson=$(find_resource_variable "$resourceName" "secrets")
-  if [ -z "$secretsJson" ] ; then
+  secrets=$(find_resource_variable "$resourceName" "secrets")
+  if [ -z "$secrets" ] ; then
     echo "[declarativesystems/SecretsManager] secrets (list of secrets to lookup) are required"
     exit 1
   fi
@@ -46,16 +46,14 @@ add_secretsmanager_run_variables() {
     exit 1
   fi
 
-  echo "======="
-  env
-  echo "========"
   echo "captured: ${secrets}"
   # JSON string -> bash array with help from JQ
   # @see https://www.starkandwayne.com/blog/bash-for-loop-over-json-array-using-jq/
-  secrets=$(echo "${secretsJson}" | jq -r '.[]')
+  local secretsArray
+  secretsArray=$(echo "${secrets}" | jq -r '.[]')
 
 
-  for secret in $secrets ; do
+  for secret in $secretsArray ; do
     # secretId
     local secretId
     secretId=$(echo "$secret" | awk -F= '{print $1}')
