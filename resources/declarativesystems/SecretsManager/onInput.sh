@@ -321,6 +321,12 @@ add_secretsmanager_run_variable() {
 
   # run AWS cli and extract the secret value, add to build pipeline
 
+  echo "aws shared credentials file: ${AWS_SHARED_CREDENTIALS_FILE})"
+  ls -l ${AWS_SHARED_CREDENTIALS_FILE} || echo missing
+  echo "AWS_CONFIG_FILE ${AWS_CONFIG_FILE}"
+  ls -l ${AWS_CONFIG_FILE} || echo missing
+  env
+
   # 1. blob of JSON...
   local awsOutput
   awsOutput=$(aws secretsmanager get-secret-value \
