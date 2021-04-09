@@ -2,6 +2,13 @@
 add_secretsmanager_run_variable() {
   local resourceName="$1"
 
+  # awsIntegration
+  local awsIntegration
+  awsIntegration=$(find_resource_variable "$resourceName" "awsIntegration")
+  if [ -z "$awsIntegration" ] ; then
+    echo "awsIntegration is required"
+  fi
+
   # pipelineVariable
   local pipelineVariable
   pipelineVariable=$(find_resource_variable "$resourceName" "pipelineVariable")
@@ -19,14 +26,26 @@ add_secretsmanager_run_variable() {
   # region
   local region
   region=$(find_resource_variable "$resourceName" "region")
+  if [ -z "$secretId" ] ; then
+    echo "region is required"
+  fi
 
-  # run AWS cli and extract the secret value, add to build pipeline
-
-  echo "aws shared credentials file: ${AWS_SHARED_CREDENTIALS_FILE})"
-  ls -l ${AWS_SHARED_CREDENTIALS_FILE} || echo missing
-  echo "AWS_CONFIG_FILE ${AWS_CONFIG_FILE}"
-  ls -l ${AWS_CONFIG_FILE} || echo missing
+  echo "===start env dump==="
   env
+  echo "===end env dump==="
+
+  # obtain keys and export using the well known variables AWS SDK expects
+  AWS_ACCESS_KEY_ID=$(eval echo '$int_'"${awsIntegration}"'_accessKeyId')
+  if [ -z "$AWS_ACCESS_KEY_ID" ] ; then
+    echo "[SecretsManager] unable to obtain AWS_ACCESS_KEY_ID for integration:${awsIntegration}"
+  fi
+  export AWS_ACCESS_KEY_ID
+
+  AWS_SECRET_ACCESS_KEY=$(eval echo '$int_'"${awsIntegration}"'_secretAccessKey')
+  if [ -z "$AWS_SECRET_ACCESS_KEY" ] ; then
+    echo "[SecretsManager] unable to obtain AWS_SECRET_ACCESS_KEY for integration:${awsIntegration}"
+  fi
+  export AWS_SECRET_ACCESS_KEY
 
   # 1. blob of JSON...
   local awsOutput

@@ -1,4 +1,12 @@
 configuration:
+  # Name of pipelines AWS integration to source credentials from. Pipelines/aws
+  # sdk is not setup to run argument-free at the process resources
+  # stage
+  awsIntegration:
+    type: String
+    validate:
+      notEmpty: true
+
   # Name of environment variable we will add to the pipeline
   pipelineVariable:
     type: String
@@ -14,3 +22,5 @@ configuration:
   # optional (otherwise use whatever the system default is
   region:
     type: String
+    validate:
+      notEmpty: true
