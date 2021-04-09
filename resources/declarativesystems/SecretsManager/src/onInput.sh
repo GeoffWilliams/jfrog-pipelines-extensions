@@ -30,10 +30,6 @@ add_secretsmanager_run_variable() {
     echo "region is required"
   fi
 
-  echo "===start env dump==="
-  env
-  echo "===end env dump==="
-
   # obtain keys and export using the well known variables AWS SDK expects
   AWS_ACCESS_KEY_ID=$(eval echo '$int_'"${awsIntegration}"'_accessKeyId')
   if [ -z "$AWS_ACCESS_KEY_ID" ] ; then
