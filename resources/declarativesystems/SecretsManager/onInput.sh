@@ -367,7 +367,12 @@ add_secretsmanager_run_variable() {
   fi
 
   add_run_variables "$pipelineVariable"="$secretString"
-  echo "[SecretsManager] added pipeline variable ${pipelineVariable} "
+  echo "[SecretsManager] added pipeline variable ${pipelineVariable}"
+
+  # destroy the AWS credentials as their presence breaks step execution
+  unset AWS_ACCESS_KEY_ID
+  unset AWS_SECRET_ACCESS_KEY
+  echo "[SecretsManager] unset AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY"
 }
 
 execute_command add_secretsmanager_run_variable "%%context.resourceName%%"
