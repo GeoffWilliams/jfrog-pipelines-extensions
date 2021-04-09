@@ -44,7 +44,7 @@ add_secretsmanager_run_variables() {
   for secret in $secrets ; do
     # secretId
     local secretId
-    secretId=$(echo "$secret" | awk awk -F= '{print $1}')
+    secretId=$(echo "$secret" | awk -F= '{print $1}')
     if [ -z "$secretId" ] ; then
       echo "[declarativesystems/SecretsManager] no secretId could be parsed from ${secret}"
       exit 1
